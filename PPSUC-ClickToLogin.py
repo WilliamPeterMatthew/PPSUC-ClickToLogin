@@ -36,7 +36,7 @@ def get_credentials():
     def on_close():
         messagebox.showinfo("退出", "程序已退出，因为未输入账号密码。")
         dialog.destroy()
-        exit(1)
+        sys.exit(1)
     
     dialog.protocol("WM_DELETE_WINDOW", on_close)
     
@@ -55,7 +55,7 @@ username, password = get_credentials()
 
 if not username or not password:
     messagebox.showerror("错误", "账号或密码为空，程序退出。")
-    exit(1)
+    sys.exit(1)
 
 data = {
     'callback': 'dr1730552179698',
