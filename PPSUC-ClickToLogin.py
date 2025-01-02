@@ -36,7 +36,7 @@ def get_credentials():
     def on_close():
         messagebox.showinfo("退出", "程序已退出，因为未输入账号密码。")
         dialog.destroy()
-        sys.exit(1)
+        exit(1)
     
     dialog.protocol("WM_DELETE_WINDOW", on_close)
     
@@ -55,7 +55,7 @@ username, password = get_credentials()
 
 if not username or not password:
     messagebox.showerror("错误", "账号或密码为空，程序退出。")
-    sys.exit(1)
+    exit(1)
 
 data = {
     'callback': 'dr1730552179698',
@@ -80,9 +80,15 @@ header = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36'
 }
 url = 'http://192.168.8.123/drcom/login?callback=dr1730552179698&DDDDD='+quote(data['DDDDD'])+'&upass='+quote(data['upass'])+'&0MKKey=123456&R1=0&R3=0&R6=0&para=00&v6ip=&_=1370215579896'
-response = requests.post(url, data=data, headers=header).status_code
-
-if response == 200:
-    messagebox.showinfo("成功", "已连接（Code:200）")
+response = requests.post(url,data=data,headers=header)
+if response.status_code == 200:
+    soup = BeautifulSoup(response.text, 'html.parser')
+    title = soup.title.string if soup.title else ''
+    if title == "信息页":
+        messagebox.showerror("错误", "连接失败，账号或密码不正确")
+    elif title == "认证成功页":
+        messagebox.showinfo("成功", "已连接（Code:200）")
+    else:
+        messagebox.showerror("错误", "未知状态，title不是预期的值")
 else:
-    messagebox.showerror("错误", f"连接失败（Code:{response}）")
+    messagebox.showerror("错误", f"连接失败（Code:{response.status_code}）")
