@@ -17,10 +17,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up Python 3.9 for ${{ matrix.arch }}
+    - name: Set up Python 3.8 for ${{ matrix.arch }}
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
+        python-version: '3.8'
         architecture: ${{ matrix.arch }}
 
     - name: Install dependencies from requirements.txt
