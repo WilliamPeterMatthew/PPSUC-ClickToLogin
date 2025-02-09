@@ -44,16 +44,19 @@ class AuthDialog:
 
     def _on_close(self):
         messagebox.showinfo("退出", "程序已退出，因为未输入账号密码。")
-        try:
-            self.dialog.destroy()
-            self.parent.destroy()
-        except tk.TclError:
-            pass
+        self.parent.destroy()
         os._exit(1)
 
     def get_credentials(self):
         self.parent.wait_window(self.dialog)
         return self.username.get(), self.password.get()
+
+def show_message(title, message):
+    root = tk.Tk()
+    root.withdraw()
+    root.iconbitmap(resource_path("favicon.ico"))
+    messagebox.showinfo(title, message)
+    root.destroy()
 
 def perform_login(username, password):
     params = {
@@ -115,17 +118,12 @@ def main():
             return
         
         status, message = perform_login(username, password)
-        messagebox.showinfo(status, message)
+        show_message(status, message)
         
     except Exception as e:
-        print(f"程序异常: {str(e)}")
+        show_message("错误", f"程序异常: {str(e)}")
     finally:
-        try:
-            if root.winfo_exists():
-                root.quit()
-                root.destroy()
-        except tk.TclError:
-            pass
+        root.destroy()
 
 if __name__ == "__main__":
     main()
