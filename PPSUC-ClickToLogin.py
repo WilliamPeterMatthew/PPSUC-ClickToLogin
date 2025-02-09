@@ -3,11 +3,13 @@ import os
 import requests
 import tkinter as tk
 from tkinter import messagebox
-from urllib.parse import urlencode
 from bs4 import BeautifulSoup
 
 def resource_path(relative_path):
-    base_path = getattr(sys, '_MEIPASS', os.path.abspath("."))
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
 class AuthDialog:
@@ -42,8 +44,12 @@ class AuthDialog:
 
     def _on_close(self):
         messagebox.showinfo("退出", "程序已退出，因为未输入账号密码。")
-        self.parent.destroy()
-        sys.exit(1)
+        try:
+            self.dialog.destroy()
+            self.parent.destroy()
+        except tk.TclError:
+            pass
+        os._exit(1)
 
     def get_credentials(self):
         self.parent.wait_window(self.dialog)
@@ -64,7 +70,7 @@ def perform_login(username, password):
     }
 
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36',
         'Accept': '*/*',
         'Connection': 'keep-alive'
     }
@@ -111,9 +117,15 @@ def main():
         status, message = perform_login(username, password)
         messagebox.showinfo(status, message)
         
+    except Exception as e:
+        print(f"程序异常: {str(e)}")
     finally:
-        root.destroy()
-        root.quit()
+        try:
+            if root.winfo_exists():
+                root.quit()
+                root.destroy()
+        except tk.TclError:
+            pass
 
 if __name__ == "__main__":
     main()
