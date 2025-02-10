@@ -1,9 +1,9 @@
-name: Build App
+name: Build App V2(Old)
 
 on:
   push:
     branches:
-      - master
+      - v2
 
 jobs:
   build:
